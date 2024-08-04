@@ -1,5 +1,6 @@
 from diffusers.models.embeddings import ImageProjection
 from diffusers.models.attention_processor import IPAdapterAttnProcessor2_0
+from diffusers.models.embeddings import MultiIPAdapterImageProjection
 import os
 import numpy as np
 import torch
@@ -129,8 +130,27 @@ def convert_unet_ip_adapter(unet):
     ip_adapter_sd = {"image_proj": image_proj, "ip_adapter": ip_adapter_attn}
     return ip_adapter_sd
 
-def load_ip_adapter_to_unet(unet, ip_adapter_sd):
-    pass
+
+def load_ip_adapter_to_unet(unet, ip_adapter_sd, low_cpu_mem_usage=False):
+    if not isinstance(ip_adapter_sd, list):
+        ip_adapter_sd = [ip_adapter_sd]
+    unet.encoder_hid_proj = None
+
+    attn_procs = unet._convert_ip_adapter_attn_to_diffusers(ip_adapter_sd, low_cpu_mem_usage=low_cpu_mem_usage)
+    unet.set_attn_processor(attn_procs)
+
+    # convert IP-Adapter Image Projection layers to diffusers
+    image_projection_layers = []
+    for state_dict in ip_adapter_sd:
+        image_projection_layer = unet._convert_ip_adapter_image_proj_to_diffusers(
+            state_dict["image_proj"], low_cpu_mem_usage=low_cpu_mem_usage
+        )
+        image_projection_layers.append(image_projection_layer)
+
+    unet.encoder_hid_proj = MultiIPAdapterImageProjection(image_projection_layers)
+    unet.config.encoder_hid_dim_type = "ip_image_proj"
+
+    unet.to(dtype=unet.dtype, device=unet.device)
 
 
 def parse_args():

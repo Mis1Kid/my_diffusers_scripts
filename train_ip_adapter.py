@@ -65,7 +65,7 @@ def main():
         param.requires_grad_(False)
 
     ip_adapter_sd = create_ip_adapter_state_dict(unet)
-    unet._load_ip_adapter_weights(ip_adapter_sd)
+    load_ip_adapter_to_unet(unet, ip_adapter_sd)
     ip_adapter_params = filter(lambda p: p.requires_grad, unet.parameters())
     ip_adapter_params = list(ip_adapter_params)
 

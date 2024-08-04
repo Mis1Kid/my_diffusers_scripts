@@ -14,6 +14,7 @@ from PIL import Image
 from torchvision import transforms
 from pathlib import Path
 import os
+from myutils import load_ip_adapter_to_unet
 
 HF_HOME = os.environ["HF_HOME"]
 print(HF_HOME)
@@ -71,7 +72,7 @@ def generate(
         pipeline.load_lora_weights(lora_path)
     if ip_adapter_path is not None:
         ip_adapter_sd = torch.load(ip_adapter_path)
-        pipeline.unet._load_ip_adapter_weights(ip_adapter_sd)
+        load_ip_adapter_to_unet(pipeline.unet, ip_adapter_sd)
     if processor is not None and image_encoder is not None and ref_images is not None:
         ip_adapter_embeds = get_embeddings(processor, image_encoder, ref_images)
         image_size = 1024

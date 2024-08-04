@@ -17,7 +17,7 @@ import seaborn as sns
 clip_dir = r"openai/clip-vit-large-patch14"
 dinov2_dir = r"facebook/dinov2-base"
 blip2_dir = r"Salesforce/blip-image-captioning-large"
-image_dir = Path(r"/mnt/d/workspace/Datasets/TextureInpaint/train/images")
+image_dir = Path(r"./dataset/train/images/liuyin")
 image_pathes = list(image_dir.glob("*.png")) + list(image_dir.glob("*.jpg"))
 images = [Image.open(image_path).convert("RGB") for image_path in image_pathes]
 

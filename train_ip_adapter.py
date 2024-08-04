@@ -36,7 +36,7 @@ from accelerate import accelerator
 
 def main():
     args = parse_args()
-    args.output_dir = str(Path(args.output_dir).parent / "train_dinov2_adapter")
+    args.output_dir = str(Path(args.output_dir) / "train_dinov2_adapter")
     logging_dir = Path(args.output_dir, args.logging_dir)
     project_config = ProjectConfiguration(project_dir=args.output_dir, logging_dir=logging_dir)
     accelerator = Accelerator(

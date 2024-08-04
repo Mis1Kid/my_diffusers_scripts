@@ -129,6 +129,9 @@ def convert_unet_ip_adapter(unet):
     ip_adapter_sd = {"image_proj": image_proj, "ip_adapter": ip_adapter_attn}
     return ip_adapter_sd
 
+def load_ip_adapter_to_unet(unet, ip_adapter_sd):
+    pass
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Simple example of a training script.")
@@ -146,8 +149,8 @@ def parse_args():
     parser.add_argument("--revision", type=str, default=None)
     parser.add_argument("--variant", type=str, default=None)
     parser.add_argument("--data_json_file", type=str, default=None)
-    parser.add_argument("--data_root_path", type=str, default=r"/mnt/d/workspace/Datasets/TextureInpaint")
-    parser.add_argument("--output_dir", type=str, default=r"/mnt/d/workspace/Output/diffusers-lora-v2")
+    parser.add_argument("--data_root_path", type=str, default=r"./dataset")
+    parser.add_argument("--output_dir", type=str, default=r"./outputs")
     parser.add_argument("--instance_prompt", type=str, default="a picture of liuyin")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--resolution", type=int, default=512)

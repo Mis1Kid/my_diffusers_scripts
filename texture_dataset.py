@@ -24,16 +24,15 @@ class MyDataset(Dataset):
         )
         exts = [".png", ".jpg", ".jpeg"]
         self.train_dir = self.root_dir / "train"
-        self.train_images_dir = self.train_dir / "images"/"liuyin"
+        self.train_images_dir = self.train_dir / "images" / "liuyin"
         self.train_images_path = [self.train_images_dir.rglob(f"*{ext}") for ext in exts]
         self.train_images_path = list(itertools.chain(*self.train_images_path))
         self.image_refs = {}
         for image_path in self.train_images_path:
-            image_name = image_path.name
-            prefix, postfix = image_name.split("-")
-            if prefix not in self.image_refs:
-                self.image_refs[prefix] = []
-            self.image_refs[prefix].append(image_path)
+            instance_name = self.get_instance_name(image_path)
+            if instance_name not in self.image_refs:
+                self.image_refs[instance_name] = []
+            self.image_refs[instance_name].append(image_path)
 
         self.test_dir = self.root_dir / "test"
         self.test_images_dir = self.test_dir / "images"
@@ -47,7 +46,6 @@ class MyDataset(Dataset):
         self.text_prompt_dropout = 0.1
         self.image_prompt_dropout = 0.1
         self.text_image_dropout = 0.1
-        self.instance_prompt = "liuyin"
         self.class_prompt = "person"
         self.supplement_prompt = "photo"
         self.all_prompts = [self.instance_prompt, self.class_prompt, self.supplement_prompt]
@@ -63,7 +61,8 @@ class MyDataset(Dataset):
         ref = Image.open(ref_path).convert("RGB")
 
         rate = random.uniform(0, 1)
-        text_prompt = ",".join(self.all_prompts)
+        instance_prompt = self.get_instance_name(image_path)
+        text_prompt = ",".join(instance_prompt, self.class_prompt, self.supplement_prompt)
         image_prompt = ref
 
         pixel_values = self.transform_resize(image)
@@ -89,7 +88,9 @@ class MyDataset(Dataset):
         return example
 
     def get_ref_path(self, image_path):
-        image_name = image_path.name
-        prefix, postfix = image_name.split("-")
-        same_prefix_refs = self.image_refs[prefix]
+        instance_name = self.get_instance_name(image_path)
+        same_prefix_refs = self.image_refs[instance_name]
         return random.choice(same_prefix_refs)
+
+    def get_instance_name(self, image_path):
+        return image_path.parent.stem

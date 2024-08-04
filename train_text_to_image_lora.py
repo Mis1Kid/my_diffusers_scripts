@@ -148,6 +148,7 @@ DATASET_NAME_MAPPING = {
 
 def main():
     args = parse_args()
+    args.output_dir=str(Path(args.output_dir) / "train_text_to_image_lora")
     logging_dir = Path(args.output_dir, args.logging_dir)
 
     accelerator_project_config = ProjectConfiguration(project_dir=args.output_dir, logging_dir=logging_dir)
@@ -563,7 +564,7 @@ def main():
 
             # run inference
             images = log_validation(pipeline, args, accelerator, epoch, is_final_validation=True)
-            images[0].save(rf"/mnt/d/workspace/diffusers/my_scripts/assert/validate/liuyin-{global_step}")
+            images[0].save(rf"./assets/validate/liuyin-{global_step}")
 
         if args.push_to_hub:
             save_model_card(

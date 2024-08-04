@@ -1,0 +1,15 @@
+bitsandbytes
+peft
+datasets
+diffusers
+transformers
+torch
+torchvision
+numpy
+opencv-python
+tqdm
+matplotlib
+wandb
+tensorboard
+scikit-learn
+seaborn
